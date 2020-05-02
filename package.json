@@ -10,12 +10,16 @@
     "generate": "nuxt-ts generate",
     "start": "nuxt-ts start",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
-    "test": "jest"
+    "test": "jest",
+    "predeploy": "npm run build",
+    "deploy": "firebase deploy"
   },
   "dependencies": {
-    "nuxt": "^2.0.0",
     "@nuxt/typescript-runtime": "^0.4.0",
-    "@nuxtjs/dotenv": "^1.4.0"
+    "@nuxtjs/dotenv": "^1.4.0",
+    "@nuxtjs/firebase": "^5.2.0",
+    "firebase": "^7.14.2",
+    "nuxt": "^2.0.0"
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.0",
