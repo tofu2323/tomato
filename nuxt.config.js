@@ -68,7 +68,7 @@ export default {
     // customEnv: false,
     // onFirebaseHosting: false,
     services: {
-      auth: true
+      auth: true,
       // auth: {
       // persistence: 'local',
       // initialize: {
@@ -96,7 +96,7 @@ export default {
       // storage: true,
       // realtimeDb: true,
       // performance: true,
-      // analytics: true,
+      analytics: true,
       // remoteConfig: {
       //   settings: {
       //     fetchTimeoutMillis: 60000, // Default
