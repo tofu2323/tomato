@@ -5,14 +5,14 @@
   "author": "gotch",
   "private": true,
   "scripts": {
-    "dev": "nuxt-ts",
+    "dev": "firebase use tomato-g && nuxt-ts",
     "build": "nuxt-ts build",
     "generate": "nuxt-ts generate",
     "start": "nuxt-ts start",
     "lint": "eslint --ext .js,.vue --ignore-path .gitignore .",
     "test": "jest",
     "predeploy": "npm run build",
-    "deploy": "firebase deploy"
+    "deploy": "firebase use tomato-pr && firebase deploy"
   },
   "dependencies": {
     "@nuxt/typescript-runtime": "^0.4.6",
@@ -23,16 +23,17 @@
   },
   "devDependencies": {
     "@nuxt/typescript-build": "^0.6.6",
-    "@nuxtjs/tailwindcss": "^2.0.0",
     "@nuxtjs/eslint-config-typescript": "^1.0.2",
     "@nuxtjs/eslint-module": "^1.2.0",
+    "@nuxtjs/tailwindcss": "^2.0.0",
+    "@vue/test-utils": "^1.0.0-beta.33",
     "babel-eslint": "^10.1.0",
+    "babel-jest": "^25.5.1",
     "eslint": "^6.8.0",
     "eslint-plugin-nuxt": ">=0.5.2",
-    "@vue/test-utils": "^1.0.0-beta.33",
-    "babel-jest": "^25.5.1",
     "jest": "^25.5.3",
-    "vue-jest": "^4.0.0-0",
-    "ts-jest": "^25.4.0"
+    "prettier": "^2.0.5",
+    "ts-jest": "^25.4.0",
+    "vue-jest": "^4.0.0-0"
   }
 }
