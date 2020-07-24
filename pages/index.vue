@@ -23,6 +23,7 @@ import THeading2 from "~/components/THeading2.vue";
 import TInputWithButton from "~/components/TInputWithButton.vue";
 import firebase from "firebase";
 import QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot;
+import DocumentSnapshot = firebase.firestore.DocumentSnapshot;
 
 export interface RoomDoc {
   name: string;
@@ -36,7 +37,7 @@ export class Room implements RoomDoc {
     public createdAt: number
   ) {}
 
-  static fromDoc(doc: QueryDocumentSnapshot) {
+  static fromDoc(doc: QueryDocumentSnapshot | DocumentSnapshot) {
     const data = doc.data() as RoomDoc;
     return new Room(doc.id, data.name, data.createdAt);
   }

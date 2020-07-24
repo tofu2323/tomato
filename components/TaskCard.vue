@@ -26,7 +26,7 @@
   </TCard>
 </template>
 <script lang="ts">
-import Vue from "vue";
+import Vue, { PropType } from "vue";
 import TInputWithButton from "~/components/TInputWithButton.vue";
 import THeading2 from "~/components/THeading2.vue";
 import THeading3 from "~/components/THeading3.vue";
@@ -34,11 +34,11 @@ import TButtonPrimary from "~/components/TButtonPrimary.vue";
 import TaskCardListItem from "~/components/TaskCardListItem.vue";
 import firebase from "firebase";
 import TaskCardCurrentTask from "~/components/TaskCardCurrentTask.vue";
-import QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot;
 import TCard from "~/components/TCard.vue";
+import { TaskBucket } from "~/pages/_roomId/index.vue";
+import QueryDocumentSnapshot = firebase.firestore.QueryDocumentSnapshot;
 import CollectionReference = firebase.firestore.CollectionReference;
 import DocumentData = firebase.firestore.DocumentData;
-import { TaskBucket } from "~/pages/_roomId/index.vue";
 
 export class Task {
   private constructor(
@@ -113,13 +113,14 @@ export default Vue.extend({
       required: true,
     },
     taskBucket: {
-      type: Object as TaskBucket,
+      type: Object as PropType<TaskBucket>,
       required: true,
     },
   },
   data: () => ({
     rawTasks: [] as Array<Task>,
     currentTask: null as Task | null,
+    listeners: [] as Array<Function>,
   }),
   computed: {
     tasksRef(): CollectionReference<DocumentData> {
@@ -155,56 +156,61 @@ export default Vue.extend({
       this.tasksRef.doc(task.id).set(task.asDoc());
     },
     startAllListener(): void {
-      // TODO unsbcsribe
-      this.tasksRef
-        .where("finishedAt", "==", 0)
-        .where("isDoing", "==", false)
-        .onSnapshot(
-          (tasksSnapshot) => {
-            tasksSnapshot.docChanges().forEach((change) => {
-              const task: Task = Task.fromDoc(change.doc);
-              if (change.type === "added") {
-                this.rawTasks.push(task);
-              }
-              if (change.type === "modified") {
-              }
-              if (change.type === "removed") {
-                this.rawTasks = this.rawTasks.filter((_) => _.id !== task.id);
-              }
-            });
-          },
-          (error) => console.error(error)
-        );
+      this.listeners.push(
+        this.tasksRef
+          .where("finishedAt", "==", 0)
+          .where("isDoing", "==", false)
+          .onSnapshot(
+            (tasksSnapshot) => {
+              tasksSnapshot.docChanges().forEach((change) => {
+                const task: Task = Task.fromDoc(change.doc);
+                if (change.type === "added") {
+                  this.rawTasks.push(task);
+                }
+                if (change.type === "modified") {
+                }
+                if (change.type === "removed") {
+                  this.rawTasks = this.rawTasks.filter((_) => _.id !== task.id);
+                }
+              });
+            },
+            (error) => console.error(error)
+          )
+      );
     },
     startCurrentTaskListener(): void {
-      // TODO unsbcsribe
-      this.tasksRef
-        .where("finishedAt", "==", 0)
-        .where("isDoing", "==", true)
-        .orderBy("startedAt", "desc")
-        .limit(1)
-        .onSnapshot(
-          (tasksSnapshot) => {
-            tasksSnapshot.docChanges().forEach((change) => {
-              const task: Task = Task.fromDoc(change.doc);
-              if (change.type === "added") {
-                this.currentTask = task;
-              }
-              if (change.type === "modified") {
-                this.currentTask = task;
-              }
-              if (change.type === "removed") {
-                this.currentTask = null;
-              }
-            });
-          },
-          (error) => console.error(error)
-        );
+      this.listeners.push(
+        this.tasksRef
+          .where("finishedAt", "==", 0)
+          .where("isDoing", "==", true)
+          .orderBy("startedAt", "desc")
+          .limit(1)
+          .onSnapshot(
+            (tasksSnapshot) => {
+              tasksSnapshot.docChanges().forEach((change) => {
+                const task: Task = Task.fromDoc(change.doc);
+                if (change.type === "added") {
+                  this.currentTask = task;
+                }
+                if (change.type === "modified") {
+                  this.currentTask = task;
+                }
+                if (change.type === "removed") {
+                  this.currentTask = null;
+                }
+              });
+            },
+            (error) => console.error(error)
+          )
+      );
     },
   },
   mounted(): void {
     this.startAllListener();
     this.startCurrentTaskListener();
+  },
+  beforeDestroy(): void {
+    this.listeners.forEach((_) => _());
   },
 });
 </script>

@@ -69,7 +69,7 @@ export class TaskBucket implements TaskBucketDoc {
 }
 export default Vue.extend({
   components: { TCard, THeading3, TInputWithButton, TContainer, TodoCard },
-  async asyncData({ app, route, error }) {
+  async asyncData({ app, route, error }): Promise<{ room: Room }> {
     const room = await app.$fireStore
       .collection("rooms")
       .doc(route.params.roomId)
@@ -81,7 +81,7 @@ export default Vue.extend({
       error({ statusCode: 404 });
     }
     return {
-      room: room as Room,
+      room: room,
     };
   },
   data() {
@@ -92,10 +92,13 @@ export default Vue.extend({
   },
   computed: {
     taskBucketsRef(): CollectionReference<DocumentData> {
-      return this.$fireStore
-        .collection("rooms")
-        .doc(this.room.id)
-        .collection("taskBuckets");
+      return (
+        this.$fireStore
+          .collection("rooms")
+          // @ts-ignore
+          .doc(this.room.id)
+          .collection("taskBuckets")
+      );
     },
   },
   methods: {
